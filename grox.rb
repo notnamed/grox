@@ -5,9 +5,11 @@
 #   left, right, normal, inverted: absolute movement
 
 # devices to manipulate
-$screen = 'eDP1'
-$touchscreen = 'Atmel Atmel maXTouch Digitizer'
-$touchpad = 'ETPS/2 Elantech Touchpad'
+$screen = 'eDP-1'
+$touchscreen = 'Wacom HID 495F Finger touch'
+$touchpad = 'ELAN0515:00 04F3:3142 Touchpad'
+$peninput = 'Wacom HID 495F Pen stylus'
+$penunput = 'Wacom HID 495F Pen eraser'
 $keyboard = 'AT Translated Set 2 keyboard'
 
 # disable keypad and touchpad on all but normal orientation
@@ -18,7 +20,7 @@ $orientationCmd = 'xrandr'
 $orientationRE = /\s*#{$screen}\s+\w+\s+[x+\d]+\s+(|left|right|inverted)\s*\(/
 
 # default direction
-$defaultDirection = 'right'
+$defaultDirection = 'normal'
 
 
 # CODE
@@ -41,6 +43,14 @@ def orientateCmd(orientation, transform)
                               " --type=float" +
                               " 'Coordinate Transformation Matrix'" +
                               " #{transform}"
+    rotatePenInput = "xinput --set-prop '#{$peninput}'" +
+			      " --type=float" +
+			      " 'Coordinate Transformation Matrix'" +
+			      " #{transform}"
+    rotatePenUnput = "xinput --set-prop '#{$penunput}'" +
+                              " --type=float" +
+                              " 'Coordinate Transformation Matrix'" +
+                              " #{transform}"
     controlKeys = ""
     if $controlKeys
         setCmd = orientation == 'normal' ? 'xinput --enable ' 
@@ -50,7 +60,9 @@ def orientateCmd(orientation, transform)
 
     return controlKeys +
            rotateScreen + ';' +
-           rotateTouchscreen + ';'
+           rotateTouchscreen + ';' +
+	   rotatePenInput + ';' +
+	   rotatePenUnput + ';'
 end
 
 
